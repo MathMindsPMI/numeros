@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reto Posicional | Domina los Números</title>
+<style>
+:root{
+  --bg:#081426; --panel:#10223b; --panel2:#162d4c; --text:#f7fbff; --muted:#b8c7da;
+  --cyan:#45d9ff; --violet:#a78bfa; --green:#55e6a5; --yellow:#ffd166; --pink:#ff6fae;
+  --danger:#ff6b6b; --white:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:
+radial-gradient(circle at 20% 0%,#183a63 0,transparent 35%),
+radial-gradient(circle at 90% 20%,#32255e 0,transparent 30%),var(--bg);color:var(--text);min-height:100vh}
+button,input,select{font:inherit}
+header{padding:26px 18px 10px;text-align:center}
+.logo{font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-1px}
+.logo span{color:var(--cyan)}
+.subtitle{color:var(--muted);margin:6px auto;max-width:800px}
+.wrap{max-width:1180px;margin:auto;padding:14px 18px 50px}
+.nav{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:16px 0 22px}
+.nav button,.btn{border:0;border-radius:14px;padding:11px 15px;background:#173354;color:white;font-weight:800;cursor:pointer;transition:.2s}
+.nav button:hover,.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.nav button.active{background:linear-gradient(135deg,var(--cyan),#6188ff);color:#04101e}
+.card{background:linear-gradient(145deg,rgba(20,44,75,.96),rgba(12,29,51,.96));border:1px solid #294b70;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 16px 40px #0004}
+h2{margin-top:0;font-size:clamp(24px,3vw,34px)}
+h3{color:var(--cyan)}
+.highlight{color:var(--yellow);font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.mini{background:#0d1d32;border:1px solid #294b70;border-radius:18px;padding:17px}
+.big-number{text-align:center;font-size:clamp(32px,7vw,72px);font-weight:900;letter-spacing:4px;margin:18px 0}
+.digit-demo{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 0}
+.digit-box{min-width:86px;background:#0a192b;border:2px solid #2e5277;border-radius:15px;padding:12px 8px;text-align:center}
+.digit-box strong{font-size:30px;color:var(--yellow);display:block}
+.digit-box small{color:var(--muted);font-size:12px}
+.decimal-point{font-size:40px;align-self:flex-start;padding-top:8px;color:var(--pink)}
+.position-strip{overflow-x:auto;padding-bottom:7px}
+table{width:100%;border-collapse:separate;border-spacing:4px;min-width:780px}
+th,td{padding:11px 8px;text-align:center;border-radius:9px}
+th{background:#24496e;color:#fff}
+td{background:#0c1b2e}
+.integer{border-bottom:3px solid var(--cyan)}
+.decimal{border-bottom:3px solid var(--violet)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+input[type=text]{background:#08182b;border:2px solid #315b83;color:white;border-radius:14px;padding:13px 15px;font-size:20px;min-width:260px;outline:none}
+input[type=text]:focus{border-color:var(--cyan)}
+.primary{background:linear-gradient(135deg,var(--cyan),#6d7cff);color:#061321}
+.success{background:linear-gradient(135deg,var(--green),#47cbd0);color:#061321}
+.purple{background:linear-gradient(135deg,var(--violet),#df78ff);color:#151025}
+.warn{background:linear-gradient(135deg,var(--yellow),#ff9f43);color:#241500}
+.hidden{display:none!important}
+.feedback{margin:14px auto 0;max-width:720px;padding:14px;border-radius:14px;text-align:center;font-weight:800}
+.good{background:#123d36;border:1px solid var(--green);color:#b9ffe4}
+.bad{background:#46252c;border:1px solid var(--danger);color:#ffd1d1}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;max-width:850px;margin:18px auto}
+.option{padding:14px;border:2px solid #315270;background:#0d2037;color:white;border-radius:14px;cursor:pointer;font-weight:750}
+.option:hover{border-color:var(--cyan);transform:scale(1.015)}
+.scorebar{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+.badge{background:#0a1b2f;border:1px solid #315270;padding:8px 13px;border-radius:999px;font-weight:800}
+.progress{height:12px;background:#09182a;border-radius:99px;overflow:hidden;margin:14px auto;max-width:700px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:.35s}
+.lesson-step{display:none}
+.lesson-step.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tip{border-left:4px solid var(--yellow);padding:12px 14px;background:#2a281b;border-radius:8px;margin:15px 0}
+.center{text-align:center}
+.reading{font-size:clamp(20px,3vw,30px);color:#dff7ff;text-align:center;line-height:1.4}
+#challengeQuestion span{
+  display:inline-block;
+  background:rgba(255,209,102,.12);
+  border-radius:10px;
+  padding:0 5px 3px;
+  text-shadow:0 0 18px rgba(255,209,102,.28);
+}
+.footer{text-align:center;color:#8296ad;margin-top:30px;font-size:13px}
+.switches{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.switches button.active{outline:3px solid #fff4}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:99}
+.confetti i{position:absolute;width:10px;height:16px;top:-20px;background:var(--yellow);animation:fall 1.5s linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(700deg);opacity:.4}}
+
+.positional-master{overflow-x:auto;margin:18px 0;padding:6px 0 12px}
+.positional-master table{min-width:1800px;border-spacing:5px}
+.positional-master th{font-size:13px;line-height:1.2;padding:12px 7px}
+.positional-master td{font-size:14px;padding:10px 7px}
+.positional-master .wholeHead{background:#164c69;border:1px solid var(--cyan)}
+.positional-master .unitHead{background:#665015;border:2px solid var(--yellow)}
+.positional-master .decimalHead{background:#513c7b;border:1px solid var(--violet)}
+.positional-master .power{font-weight:900;color:var(--yellow)}
+.positional-master .abbr{font-weight:900;font-size:16px}
+.legend-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.legend-chip{padding:8px 12px;border-radius:999px;background:#0b1d32;border:1px solid #315270;font-weight:800}
+@media(max-width:600px){.card{padding:16px}.digit-box{min-width:68px}.nav button{font-size:13px;padding:9px 10px}}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🔢 RETO <span>POSICIONAL</span></div>
+  <div class="subtitle">Descubre la posición, el valor y la lectura de los números enteros y decimales.</div>
+</header>
+
+<div class="wrap">
+  <nav class="nav">
+    <button class="active" data-page="aprende">📚 Aprende</button>
+    <button data-page="explora">🔍 Explora</button>
+    <button data-page="identifica">🎯 Identifica</button>
+    <button data-page="valor">💰 ¿Cuánto vale?</button>
+    <button data-page="lee">🗣️ ¿Cómo se lee?</button>
+    <button data-page="reto">🏆 Desafío</button>
+  </nav>
+
+  <section id="aprende" class="page">
+    <div class="card">
+      <div class="scorebar"><span class="badge">PASO <span id="lessonN">1</span> DE 8</span></div>
+      <div class="progress"><div id="lessonProgress" style="width:12.5%"></div></div>
+
+      <div class="lesson-step active">
+        <h2>📚 Antes de jugar: conoce el lenguaje de los números</h2>
+        <p>Para leer correctamente un número es importante distinguir entre <b class="highlight">cifra</b>, <b class="highlight">número</b> y <b class="highlight">valor posicional</b>.</p>
+        <div class="grid">
+          <div class="mini"><h3>🔢 Cifra</h3><p>Es cada símbolo que usamos para escribir números: <b>0, 1, 2, 3, 4, 5, 6, 7, 8 y 9.</b></p></div>
+          <div class="mini"><h3>🧮 Número</h3><p>Es una cantidad formada por una o más cifras. Ejemplo: <b>5 284</b> tiene cuatro cifras.</p></div>
+          <div class="mini"><h3>📍 Valor posicional</h3><p>Es el valor que adquiere una cifra según el lugar donde está escrita.</p></div>
+        </div>
+        <div class="tip">💡 En <b>5 284</b>, la cifra 5 no vale 5: ocupa las <b>unidades de millar</b>, por lo que vale <b>5 000</b>.</div>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🧠 ¿Qué es el valor posicional?</h2>
+        <p>Nuestro sistema de numeración es <b class="highlight">decimal</b> y <b class="highlight">posicional</b>.</p>
+        <div class="grid">
+          <div class="mini"><h3>🔟 Es decimal</h3><p>Porque utiliza diez cifras: <b>0, 1, 2, 3, 4, 5, 6, 7, 8 y 9.</b></p></div>
+          <div class="mini"><h3>📍 Es posicional</h3><p>Porque una misma cifra puede tener un valor diferente según el lugar que ocupa.</p></div>
+        </div>
+        <div class="big-number">5 555</div>
+        <p class="center">Aunque todos son <b>5</b>, sus valores son diferentes:</p>
+        <div class="digit-demo">
+          <div class="digit-box"><strong>5</strong><small>UNIDAD DE MILLAR</small><br>5 000</div>
+          <div class="digit-box"><strong>5</strong><small>CENTENA</small><br>500</div>
+          <div class="digit-box"><strong>5</strong><small>DECENA</small><br>50</div>
+          <div class="digit-box"><strong>5</strong><small>UNIDAD</small><br>5</div>
+        </div>
+        <div class="tip">💡 <b>Idea clave:</b> mover una cifra una posición a la izquierda hace que su valor sea 10 veces mayor.</div>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🔢 Posiciones de los números enteros</h2>
+        <p>Las posiciones se organizan de derecha a izquierda. Observa cómo crece el valor.</p>
+        <div class="position-strip"><table>
+          <tr><th>Centena de millón</th><th>Decena de millón</th><th>Unidad de millón</th><th>Centena de millar</th><th>Decena de millar</th><th>Unidad de millar</th><th>Centena</th><th>Decena</th><th>Unidad</th></tr>
+          <tr><td class="integer">100 000 000</td><td class="integer">10 000 000</td><td class="integer">1 000 000</td><td class="integer">100 000</td><td class="integer">10 000</td><td class="integer">1 000</td><td class="integer">100</td><td class="integer">10</td><td class="integer">1</td></tr>
+        </table></div>
+        <div class="tip">👀 Siempre empieza ubicando la <b>unidad</b> a la derecha. Después avanza: decena, centena, unidad de millar, decena de millar, centena de millar, unidad de millón, decena de millón y centena de millón.</div>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🧭 Tabla completa de valor posicional</h2>
+        <p>La <b>unidad</b> es nuestro punto de referencia. Hacia la <b>izquierda</b>, cada posición vale <b>10 veces más</b>; hacia la <b>derecha del separador decimal</b>, cada posición vale <b>10 veces menos</b>.</p>
+
+        <div class="legend-row">
+          <span class="legend-chip" style="border-color:var(--cyan)">⬅️ 9 posiciones enteras</span>
+          <span class="legend-chip" style="border-color:var(--yellow)">⭐ UNIDAD</span>
+          <span class="legend-chip" style="border-color:var(--violet)">7 posiciones decimales ➡️</span>
+        </div>
+
+        <div class="positional-master">
+          <table>
+            <tr>
+              <th class="wholeHead">CENTENA DE<br>MILLÓN</th>
+              <th class="wholeHead">DECENA DE<br>MILLÓN</th>
+              <th class="wholeHead">UNIDAD DE<br>MILLÓN</th>
+              <th class="wholeHead">CENTENA DE<br>MILLAR</th>
+              <th class="wholeHead">DECENA DE<br>MILLAR</th>
+              <th class="wholeHead">UNIDAD DE<br>MILLAR</th>
+              <th class="wholeHead">CENTENA</th>
+              <th class="wholeHead">DECENA</th>
+              <th class="wholeHead">UNIDAD</th>
+              <th class="unitHead">SEPARADOR<br>DECIMAL</th>
+              <th class="decimalHead">DÉCIMA</th>
+              <th class="decimalHead">CENTÉSIMA</th>
+              <th class="decimalHead">MILÉSIMA</th>
+              <th class="decimalHead">DIEZMILÉSIMA</th>
+              <th class="decimalHead">CIENMILÉSIMA</th>
+              <th class="decimalHead">MILLONÉSIMA</th>
+              <th class="decimalHead">DIEZMILLONÉSIMA</th>
+            </tr>
+            <tr>
+              <td class="abbr">CM</td><td class="abbr">DM</td><td class="abbr">UM</td>
+              <td class="abbr">Cm</td><td class="abbr">Dm</td><td class="abbr">Um</td>
+              <td class="abbr">C</td><td class="abbr">D</td><td class="abbr">U</td>
+              <td class="abbr">.</td>
+              <td class="abbr">d</td><td class="abbr">c</td><td class="abbr">m</td>
+              <td class="abbr">dm</td><td class="abbr">cm</td><td class="abbr">µ</td><td class="abbr">dµ</td>
+            </tr>
+            <tr>
+              <td class="power">10⁸</td><td class="power">10⁷</td><td class="power">10⁶</td>
+              <td class="power">10⁵</td><td class="power">10⁴</td><td class="power">10³</td>
+              <td class="power">10²</td><td class="power">10¹</td><td class="power">10⁰</td>
+              <td>—</td>
+              <td class="power">10⁻¹</td><td class="power">10⁻²</td><td class="power">10⁻³</td>
+              <td class="power">10⁻⁴</td><td class="power">10⁻⁵</td><td class="power">10⁻⁶</td><td class="power">10⁻⁷</td>
+            </tr>
+            <tr>
+              <td>100 000 000</td><td>10 000 000</td><td>1 000 000</td>
+              <td>100 000</td><td>10 000</td><td>1 000</td>
+              <td>100</td><td>10</td><td>1</td>
+              <td>.</td>
+              <td>0.1</td><td>0.01</td><td>0.001</td>
+              <td>0.0001</td><td>0.00001</td><td>0.000001</td><td>0.0000001</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="tip">👉 <b>Cómo usarla:</b> localiza primero la unidad. Si te mueves un lugar a la izquierda, multiplicas por 10; si te mueves un lugar a la derecha, divides entre 10.</div>
+        <div class="grid">
+          <div class="mini"><h3>📈 Hacia la izquierda</h3><p><b>7 → 70 → 700 → 7 000</b><br>La misma cifra aumenta su valor diez veces en cada desplazamiento.</p></div>
+          <div class="mini"><h3>📉 Hacia la derecha</h3><p><b>7 → 0.7 → 0.07 → 0.007</b><br>La misma cifra representa una parte diez veces menor en cada desplazamiento.</p></div>
+        </div>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🏛️ Clases y periodos: una estrategia para leer números grandes</h2>
+        <p>Para facilitar la lectura, agrupamos las cifras <b>de tres en tres desde la derecha</b>. Cada grupo forma una clase o periodo.</p>
+        <div class="big-number" style="font-size:clamp(30px,5vw,58px)">
+          <span style="color:var(--violet)">87</span>
+          <span style="color:var(--cyan)">454</span>
+          <span style="color:var(--yellow)">268</span>
+        </div>
+        <div class="grid">
+          <div class="mini center"><h3 style="color:var(--violet)">MILLONES</h3><p><b>87</b><br>ochenta y siete millones</p></div>
+          <div class="mini center"><h3 style="color:var(--cyan)">MILLARES</h3><p><b>454</b><br>cuatrocientos cincuenta y cuatro mil</p></div>
+          <div class="mini center"><h3 style="color:var(--yellow)">UNIDADES</h3><p><b>268</b><br>doscientos sesenta y ocho</p></div>
+        </div>
+        <div class="tip">🗣️ Por eso <b>87 454 268</b> se lee: <b>ochenta y siete millones cuatrocientos cincuenta y cuatro mil doscientos sesenta y ocho.</b></div>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🔵 ¿Qué sucede con los números decimales?</h2>
+        <p>El separador decimal divide la <b>parte entera</b> de la <b>parte decimal</b>. En esta app puedes escribir <b>348.726</b> o <b>348,726</b>.</p>
+        <div class="digit-demo">
+          <div class="digit-box"><strong>3</strong><small>CENTENA</small><br>300</div>
+          <div class="digit-box"><strong>4</strong><small>DECENA</small><br>40</div>
+          <div class="digit-box"><strong>8</strong><small>UNIDAD</small><br>8</div>
+          <div class="decimal-point">.</div>
+          <div class="digit-box"><strong>7</strong><small>DÉCIMA</small><br>0.7</div>
+          <div class="digit-box"><strong>2</strong><small>CENTÉSIMA</small><br>0.02</div>
+          <div class="digit-box"><strong>6</strong><small>MILÉSIMA</small><br>0.006</div>
+        </div>
+        <div class="grid">
+          <div class="mini"><h3>⬅️ Parte entera</h3><p>A la izquierda del separador: unidad, decena, centena, millar, millón...</p></div>
+          <div class="mini"><h3>➡️ Parte decimal</h3><p>A la derecha: décima, centésima, milésima, diezmilésima, cienmilésima y millonésima.</p></div>
+        </div>
+        <div class="tip">⚠️ <b>0.7 no es igual a 0.07.</b> El primero representa <b>7 décimos</b>; el segundo, <b>7 centésimos</b>. Cada lugar hacia la derecha representa una parte diez veces menor.</div>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🧩 Valor absoluto y valor relativo de una cifra</h2>
+        <div class="grid">
+          <div class="mini">
+            <h3>🔢 Valor de la cifra</h3>
+            <p>La cifra conserva su identidad. Por ejemplo, en <b>7 352</b>, el símbolo señalado puede ser el <b>7</b>.</p>
+          </div>
+          <div class="mini">
+            <h3>📍 Valor posicional o relativo</h3>
+            <p>Depende del lugar que ocupa. En <b>7 352</b>, el 7 está en <b>unidad de millar</b>, por lo tanto representa <b>7 000</b>.</p>
+          </div>
+        </div>
+        <div class="tip">🧠 Pregúntate siempre tres cosas: <b>¿qué cifra es?, ¿qué posición ocupa? y ¿cuánto vale en esa posición?</b></div>
+        <p>El <b>cero</b> también es fundamental: aunque por sí mismo representa ausencia de unidades, puede funcionar como marcador de posición. Por ejemplo, <b>5 007</b> no representa lo mismo que <b>507</b>.</p>
+      </div>
+
+      <div class="lesson-step">
+        <h2>🗣️ ¿Cómo se leen?</h2>
+        <div class="grid">
+          <div class="mini"><h3>Entero</h3><div class="big-number" style="font-size:34px">4 325 018</div><p>Cuatro millones trescientos veinticinco mil dieciocho.</p></div>
+          <div class="mini"><h3>Decimal</h3><div class="big-number" style="font-size:34px">325.47</div><p>Trescientos veinticinco enteros y cuarenta y siete centésimos.</p></div>
+        </div>
+        <p class="center"><b>0.7</b> = siete décimos &nbsp; • &nbsp; <b>0.07</b> = siete centésimos &nbsp; • &nbsp; <b>0.007</b> = siete milésimos</p>
+        <div class="tip">🎓 Ya tienes lo necesario. Ahora entra a <b>Explora</b> o comienza los retos.</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="lessonPrev">← Anterior</button>
+        <button class="btn primary" id="lessonNext">Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="explora" class="page hidden">
+    <div class="card">
+      <h2>🔍 Laboratorio de números</h2>
+      <p class="center">Escribe un número entero o decimal. Descubriremos qué significa cada cifra.</p>
+      <div class="controls">
+        <input id="exploreInput" type="text" inputmode="decimal" value="348.726" placeholder="Ej. 58342.076">
+        <button class="btn primary" id="exploreBtn">Analizar número</button>
+        <button class="btn purple" id="speakExplore">🔊 Escuchar</button>
+      </div>
+      <div id="exploreNumber" class="big-number">348.726</div>
+      <div id="exploreDigits" class="digit-demo"></div>
+      <div id="exploreRead" class="reading"></div>
+    </div>
+  </section>
+
+  <section id="identifica" class="page hidden">
+    <div class="card center">
+      <h2>🎯 Identifica la posición</h2>
+      <div class="switches">
+        <button class="btn primary active modeBtn" data-mode="entero">Enteros</button>
+        <button class="btn purple modeBtn" data-mode="decimal">Decimales</button>
+        <button class="btn warn modeBtn" data-mode="mixto">Mixto 🔥</button>
+      </div>
+      <div class="scorebar"><span class="badge">⭐ Puntos: <span id="idScore">0</span></span><span class="badge">🔥 Racha: <span id="idStreak">0</span></span></div>
+      <div id="idQuestion" class="big-number"></div>
+      <p id="idPrompt"></p>
+      <div id="idOptions" class="options"></div>
+      <div id="idFeedback"></div>
+      <button class="btn primary hidden" id="idNext">Siguiente reto →</button>
+    </div>
+  </section>
+
+  <section id="valor" class="page hidden">
+    <div class="card center">
+      <h2>💰 ¿Cuánto vale la cifra?</h2>
+      <p>No basta con reconocer la cifra: descubre su <b>valor posicional</b>.</p>
+      <div class="scorebar"><span class="badge">⭐ Puntos: <span id="valScore">0</span></span><span class="badge">🔥 Racha: <span id="valStreak">0</span></span></div>
+      <div id="valQuestion" class="big-number"></div>
+      <p id="valPrompt"></p>
+      <div id="valOptions" class="options"></div>
+      <div id="valFeedback"></div>
+      <button class="btn primary hidden" id="valNext">Siguiente reto →</button>
+    </div>
+  </section>
+
+  <section id="lee" class="page hidden">
+    <div class="card center">
+      <h2>🗣️ ¿Cómo se lee este número?</h2>
+      <div class="switches">
+        <button class="btn primary" id="newRead">🎲 Nuevo número</button>
+        <button class="btn purple" id="speakRead">🔊 Escuchar</button>
+      </div>
+      <div id="readNumber" class="big-number"></div>
+      <button class="btn success" id="revealRead">👀 Descubrir lectura</button>
+      <div id="readAnswer" class="reading hidden" style="margin-top:22px"></div>
+      <div class="tip">Primero intenta leerlo en voz alta. Después descubre la respuesta.</div>
+    </div>
+  </section>
+
+  <section id="reto" class="page hidden">
+    <div class="card center">
+      <h2>🏆 Desafío final</h2>
+      <p>10 preguntas • 3 vidas • enteros y decimales • ¡demuestra lo que sabes!</p>
+      <p id="challengeLegend" class="hidden" style="color:var(--muted);margin-top:-4px">
+        La cifra <span style="color:var(--yellow);font-weight:900;text-decoration:underline;text-decoration-thickness:3px">amarilla y subrayada</span> es la que debes analizar.
+      </p>
+      <div class="scorebar">
+        <span class="badge">Pregunta: <span id="challengeN">0</span>/10</span>
+        <span class="badge">⭐ <span id="challengeScore">0</span></span>
+        <span class="badge">❤️ <span id="challengeLives">3</span></span>
+        <span class="badge">🔥 <span id="challengeStreak">0</span></span>
+      </div>
+      <div class="progress"><div id="challengeProgress"></div></div>
+      <div id="challengeStart">
+        <button class="btn warn" id="startChallenge" style="font-size:20px;padding:15px 25px">🚀 COMENZAR DESAFÍO</button>
+      </div>
+      <div id="challengeGame" class="hidden">
+        <div id="challengeQuestion" class="big-number"></div>
+        <p id="challengePrompt"></p>
+        <div id="challengeOptions" class="options"></div>
+        <div id="challengeFeedback"></div>
+        <button class="btn primary hidden" id="challengeNext">Continuar →</button>
+      </div>
+      <div id="challengeEnd" class="hidden"></div>
+    </div>
+  </section>
+
+  <div class="footer">Reto Posicional • Aprende, practica y domina los números 🚀</div>
+</div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+const intNames=["unidad","decena","centena","unidad de millar","decena de millar","centena de millar","unidad de millón","decena de millón","centena de millón","unidad de mil millones","decena de mil millones","centena de mil millones"];
+const decNames=["décima","centésima","milésima","diezmilésima","cienmilésima","millonésima"];
+const decPlural=["décimos","centésimos","milésimos","diezmilésimos","cienmilésimos","millonésimos"];
+
+function normalizeNum(s){
+  s=String(s).trim().replace(/\s/g,"");
+  if(s.includes(",") && s.includes(".")){
+    if(s.lastIndexOf(",")>s.lastIndexOf(".")) s=s.replace(/\./g,"").replace(",",".");
+    else s=s.replace(/,/g,"");
+  }else if(s.includes(",")) s=s.replace(",",".");
+  s=s.replace(/[^\d.]/g,"");
+  let p=s.split(".");
+  if(p.length>2) s=p.shift()+"."+p.join("");
+  if(s.startsWith(".")) s="0"+s;
+  return s || "0";
+}
+function formatNum(s){
+  s=normalizeNum(s); let [a,b]=s.split(".");
+  a=(a||"0").replace(/^0+(?=\d)/,"");
+  a=a.replace(/\B(?=(\d{3})+(?!\d))/g," ");
+  return b!==undefined ? a+"."+b : a;
+}
+function cleanInt(s){return (s||"0").replace(/^0+(?=\d)/,"")||"0"}
+
+const units=["","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve"];
+
+function apocope(s){
+  return s.replace(/veintiuno$/,"veintiún")
+          .replace(/ y uno$/," y un")
+          .replace(/uno$/,"un");
+}
+
+function spanish0to99(n){
+  const fixed={
+    0:"cero",1:"uno",2:"dos",3:"tres",4:"cuatro",5:"cinco",6:"seis",7:"siete",8:"ocho",9:"nueve",
+    10:"diez",11:"once",12:"doce",13:"trece",14:"catorce",15:"quince",
+    16:"dieciséis",17:"diecisiete",18:"dieciocho",19:"diecinueve",
+    20:"veinte",21:"veintiuno",22:"veintidós",23:"veintitrés",24:"veinticuatro",
+    25:"veinticinco",26:"veintiséis",27:"veintisiete",28:"veintiocho",29:"veintinueve"
+  };
+  if(n<=29) return fixed[n];
+  const tens={
+    30:"treinta",40:"cuarenta",50:"cincuenta",60:"sesenta",
+    70:"setenta",80:"ochenta",90:"noventa"
+  };
+  const base=Math.floor(n/10)*10, u=n%10;
+  return tens[base]+(u ? " y "+units[u] : "");
+}
+
+function spanish0to999(n){
+  if(n<100) return spanish0to99(n);
+  if(n===100) return "cien";
+  const hundreds={
+    1:"ciento",2:"doscientos",3:"trescientos",4:"cuatrocientos",
+    5:"quinientos",6:"seiscientos",7:"setecientos",8:"ochocientos",9:"novecientos"
+  };
+  const h=Math.floor(n/100), r=n%100;
+  return hundreds[h]+(r ? " "+spanish0to99(r) : "");
+}
+
+function spanishInteger(str){
+  str=cleanInt(str);
+  if(str==="0") return "cero";
+
+  let n=BigInt(str);
+  if(n>999999999999n) return "número demasiado grande para la lectura automática";
+
+  const billions=Number(n/1000000000n); n%=1000000000n;
+  const millions=Number(n/1000000n); n%=1000000n;
+  const thousands=Number(n/1000n);
+  const rest=Number(n%1000n);
+  const out=[];
+
+  // En español de escala larga, 10^9 se expresa aquí como "mil millones".
+  if(billions){
+    if(billions===1) out.push("mil millones");
+    else out.push(apocope(spanish0to999(billions))+" mil millones");
+  }
+
+  if(millions){
+    if(millions===1) out.push("un millón");
+    else out.push(apocope(spanish0to999(millions))+" millones");
+  }
+
+  if(thousands){
+    if(thousands===1) out.push("mil");
+    else out.push(apocope(spanish0to999(thousands))+" mil");
+  }
+
+  if(rest) out.push(spanish0to999(rest));
+  return out.join(" ");
+}
+
+function integerWords(str){ return spanishInteger(str); }
+
+function numberWords(s){
+  s=normalizeNum(s);
+  let [a,b]=s.split(".");
+  a=cleanInt(a||"0");
+  const integerText=spanishInteger(a);
+
+  if(b===undefined || b==="" || /^0+$/.test(b)) return integerText;
+
+  b=b.slice(0,6);
+  const decimalValue=parseInt(b,10);
+  if(decimalValue===0) return integerText;
+
+  const decimalNouns=[
+    "décimos","centésimos","milésimos",
+    "diezmilésimos","cienmilésimos","millonésimos"
+  ];
+  const decimalText=apocope(spanishInteger(String(decimalValue)));
+  const enteroText=(a==="1") ? "un entero" : integerText+" enteros";
+  return `${enteroText} y ${decimalText} ${decimalNouns[b.length-1]}`;
+}
+function posData(s){
+  s=normalizeNum(s); let [a,b=""]=s.split("."); a=cleanInt(a);
+  let arr=[];
+  [...a].forEach((d,i)=>{
+    let p=a.length-1-i; arr.push({digit:d,name:intNames[p]||`10^${p}`,value:(BigInt(d)*10n**BigInt(p)).toString(),type:"int"});
+  });
+  [...b.slice(0,6)].forEach((d,i)=>{
+    arr.push({digit:d,name:decNames[i],value:(Number(d)/10**(i+1)).toFixed(i+1),type:"dec"});
+  });
+  return arr;
+}
+function fullPositionData(s){
+  s=normalizeNum(s);
+  let [a,b=""]=s.split(".");
+  a=cleanInt(a);
+  let arr=[];
+  [...a].forEach((d,i)=>{
+    let p=a.length-1-i;
+    arr.push({
+      digit:d,
+      name:intNames[p]||`10^${p}`,
+      value:(BigInt(d)*10n**BigInt(p)).toString(),
+      type:"int",
+      partIndex:i,
+      power:p
+    });
+  });
+  [...b.slice(0,6)].forEach((d,i)=>{
+    arr.push({
+      digit:d,
+      name:decNames[i],
+      value:(Number(d)/10**(i+1)).toFixed(i+1),
+      type:"dec",
+      partIndex:i,
+      decimalPlace:i+1
+    });
+  });
+  return arr;
+}
+function candidatePositions(s){
+  return fullPositionData(s)
+    .map((x,i)=>({...x, fullIndex:i}))
+    .filter(x=>x.digit!=="0");
+}
+function highlightedNumber(s,target){
+  s=normalizeNum(s);
+  let [a,b=""]=s.split(".");
+  a=cleanInt(a);
+  let integer=[];
+  [...a].forEach((d,i)=>{
+    let fullIdx=i;
+    let token=(fullIdx===target.fullIndex)
+      ? `<span style="color:var(--yellow);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:8px">${d}</span>`
+      : d;
+    if(i>0 && (a.length-i)%3===0) integer.push(" ");
+    integer.push(token);
+  });
+  let decimal=[];
+  if(b!==""){
+    decimal.push(".");
+    [...b].forEach((d,i)=>{
+      let fullIdx=a.length+i;
+      decimal.push(fullIdx===target.fullIndex
+        ? `<span style="color:var(--yellow);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:8px">${d}</span>`
+        : d);
+    });
+  }
+  return integer.join("")+decimal.join("");
+}
+function valueDistractors(target){
+  let vals=[];
+  let digit=Number(target.digit);
+  if(target.type==="int"){
+    let p=target.power;
+    for(let delta of [-3,-2,-1,1,2,3]){
+      let q=p+delta;
+      if(q>=0 && q<=11) vals.push((BigInt(digit)*10n**BigInt(q)).toString());
+    }
+  }else{
+    let p=target.decimalPlace;
+    for(let delta of [-3,-2,-1,1,2,3]){
+      let q=p+delta;
+      if(q>=1 && q<=6) vals.push((digit/10**q).toFixed(q));
+    }
+  }
+  return [...new Set(vals.filter(v=>v!==target.value))];
+}
+
+function speak(text){
+  if(!("speechSynthesis" in window))return alert("Tu navegador no tiene lectura por voz.");
+  speechSynthesis.cancel(); let u=new SpeechSynthesisUtterance(text);u.lang="es-MX";u.rate=.88;speechSynthesis.speak(u);
+}
+function confetti(){
+  const c=document.getElementById("confetti"); c.innerHTML="";
+  for(let i=0;i<45;i++){let e=document.createElement("i");e.style.left=Math.random()*100+"%";e.style.animationDelay=Math.random()*.5+"s";e.style.transform=`rotate(${Math.random()*360}deg)`;e.style.background=["#45d9ff","#55e6a5","#ffd166","#ff6fae","#a78bfa"][i%5];c.appendChild(e)}
+  setTimeout(()=>c.innerHTML="",2100);
+}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));document.getElementById(b.dataset.page).classList.remove("hidden");
+});
+
+let lesson=0,steps=[...document.querySelectorAll(".lesson-step")];
+function renderLesson(){steps.forEach((s,i)=>s.classList.toggle("active",i===lesson));lessonN.textContent=lesson+1;lessonProgress.style.width=((lesson+1)/steps.length*100)+"%";lessonPrev.disabled=lesson===0;lessonNext.textContent=lesson===steps.length-1?"¡Ir a practicar! 🚀":"Siguiente →"}
+lessonPrev.onclick=()=>{if(lesson>0)lesson--;renderLesson()}
+lessonNext.onclick=()=>{if(lesson<steps.length-1){lesson++;renderLesson()}else document.querySelector('[data-page="explora"]').click()}
+
+function renderExplore(){
+  let s=normalizeNum(exploreInput.value).slice(0,20); exploreInput.value=s; exploreNumber.textContent=formatNum(s);
+  let data=posData(s); exploreDigits.innerHTML=data.map(x=>`<div class="digit-box" style="border-color:${x.type==="dec"?"var(--violet)":"var(--cyan)"}"><strong>${x.digit}</strong><small>${x.name.toUpperCase()}</small><br>${x.value}</div>`).join("");
+  exploreRead.textContent="Se lee: "+numberWords(s)+".";
+}
+exploreBtn.onclick=renderExplore;speakExplore.onclick=()=>speak(numberWords(exploreInput.value));renderExplore();
+
+function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+function makeNumber(mode="mixto"){
+ let len=randomInt(3,9),a=String(randomInt(1,9));for(let i=1;i<len;i++)a+=randomInt(0,9);
+ if(mode==="entero")return a;
+ let dl=randomInt(1,4),b="";for(let i=0;i<dl;i++)b+=randomInt(0,9);
+ if(mode==="decimal")return a+"."+b;
+ return Math.random()<.5?a:a+"."+b;
+}
+let idMode="entero",idScoreN=0,idStreakN=0,idAnswer="";
+document.querySelectorAll(".modeBtn").forEach(b=>b.onclick=()=>{document.querySelectorAll(".modeBtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");idMode=b.dataset.mode;newIdentify()});
+function newIdentify(){
+ let s=makeNumber(idMode);
+ let data=candidatePositions(s);
+ let target=data[randomInt(0,data.length-1)];
+ idAnswer=target.name;
+
+ idQuestion.innerHTML=highlightedNumber(s,target);
+ idPrompt.innerHTML=`¿Qué posición ocupa la cifra <b class="highlight">${target.digit}</b> que está resaltada?`;
+
+ let pool=[...intNames.slice(0,12),...decNames.slice(0,6)].filter(x=>x!==idAnswer);
+ let opts=shuffle([idAnswer,...shuffle(pool).slice(0,3)]);
+ idOptions.innerHTML=opts.map(o=>`<button class="option">${o}</button>`).join("");
+ idFeedback.innerHTML="";
+ idNext.classList.add("hidden");
+ [...idOptions.children].forEach(b=>b.onclick=()=>answerIdentify(b.textContent,target));
+}
+function answerIdentify(ans,target){
+ [...idOptions.children].forEach(x=>x.disabled=true);
+ if(ans===idAnswer){idScoreN+=10;idStreakN++;idFeedback.innerHTML=`<div class="feedback good">✅ ¡Correcto! La cifra resaltada ${target.digit} está en la posición de <b>${target.name}</b>.</div>`;if(idStreakN%3===0)confetti()}
+ else{idStreakN=0;idFeedback.innerHTML=`<div class="feedback bad">💡 Casi. La cifra resaltada ${target.digit} ocupa la posición de <b>${target.name}</b>. Recuerda contar desde la unidad hacia la izquierda; después del punto decimal, comienza con décimas.</div>`}
+ idScore.textContent=idScoreN;idStreak.textContent=idStreakN;idNext.classList.remove("hidden");
+}
+idNext.onclick=newIdentify;newIdentify();
+
+let valScoreN=0,valStreakN=0,valAnswer="";
+function newValue(){
+ let s=makeNumber("mixto");
+ let data=candidatePositions(s);
+ let target=data[randomInt(0,data.length-1)];
+ valAnswer=target.value;
+
+ valQuestion.innerHTML=highlightedNumber(s,target);
+ valPrompt.innerHTML=`¿Cuánto vale la cifra <b class="highlight">${target.digit}</b> que está resaltada por la posición que ocupa?`;
+
+ let wrong=valueDistractors(target);
+ // Garantiza al menos 3 distractores coherentes.
+ if(wrong.length<3){
+   let extras=target.type==="int"
+     ? ["1","10","100","1000","10000","100000","1000000","10000000","100000000"]
+     : ["0.1","0.01","0.001","0.0001","0.00001","0.000001"];
+   wrong=[...new Set([...wrong,...extras.filter(x=>x!==valAnswer)])];
+ }
+ let opts=shuffle([valAnswer,...shuffle(wrong).slice(0,3)]);
+ valOptions.innerHTML=opts.map(o=>`<button class="option">${o}</button>`).join("");
+ valFeedback.innerHTML="";
+ valNext.classList.add("hidden");
+
+ [...valOptions.children].forEach(b=>b.onclick=()=>{
+   [...valOptions.children].forEach(x=>x.disabled=true);
+   if(b.textContent===valAnswer){
+     valScoreN+=10; valStreakN++;
+     valFeedback.innerHTML=`<div class="feedback good">✅ ¡Muy bien! La cifra resaltada ${target.digit} está en <b>${target.name}</b> y vale <b>${target.value}</b>.</div>`;
+     if(valStreakN%3===0) confetti();
+   }else{
+     valStreakN=0;
+     valFeedback.innerHTML=`<div class="feedback bad">🔎 La cifra resaltada ${target.digit} está en <b>${target.name}</b>; por eso su valor es <b>${target.value}</b>.</div>`;
+   }
+   valScore.textContent=valScoreN;
+   valStreak.textContent=valStreakN;
+   valNext.classList.remove("hidden");
+ });
+}
+valNext.onclick=newValue;newValue();
+
+let currentRead="";
+function newReading(){currentRead=makeNumber("mixto");readNumber.textContent=formatNum(currentRead);readAnswer.textContent=numberWords(currentRead)+".";readAnswer.classList.add("hidden")}
+newRead.onclick=newReading;revealRead.onclick=()=>readAnswer.classList.remove("hidden");speakRead.onclick=()=>speak(numberWords(currentRead));newReading();
+
+let ch={n:0,score:0,lives:3,streak:0,answer:"",done:false};
+function updateCh(){challengeN.textContent=ch.n;challengeScore.textContent=ch.score;challengeLives.textContent=ch.lives;challengeStreak.textContent=ch.streak;challengeProgress.style.width=(ch.n/10*100)+"%"}
+function startCh(){ch={n:0,score:0,lives:3,streak:0,answer:"",done:false};challengeStart.classList.add("hidden");challengeEnd.classList.add("hidden");challengeGame.classList.remove("hidden");challengeLegend.classList.remove("hidden");nextCh()}
+function nextCh(){
+ if(ch.n>=10||ch.lives<=0)return endCh();
+ ch.n++; updateCh();
+ challengeFeedback.innerHTML="";
+ challengeNext.classList.add("hidden");
+
+ let s=makeNumber("mixto");
+ let data=candidatePositions(s);
+ let t=data[randomInt(0,data.length-1)];
+ let kind=Math.random()<.5?"pos":"val";
+
+ ch.answer=kind==="pos"?t.name:t.value;
+ challengeQuestion.innerHTML=highlightedNumber(s,t);
+ challengePrompt.innerHTML=kind==="pos"
+   ? `¿Qué posición ocupa la cifra <b class="highlight">${t.digit}</b> que está resaltada?`
+   : `¿Cuál es el valor posicional de la cifra <b class="highlight">${t.digit}</b> que está resaltada?`;
+
+ let pool;
+ if(kind==="pos"){
+   pool=[...intNames.slice(0,12),...decNames.slice(0,6)].filter(x=>x!==ch.answer);
+ }else{
+   pool=valueDistractors(t);
+   if(pool.length<3){
+     let extras=t.type==="int"
+       ? ["1","10","100","1000","10000","100000","1000000","10000000","100000000"]
+       : ["0.1","0.01","0.001","0.0001","0.00001","0.000001"];
+     pool=[...new Set([...pool,...extras.filter(x=>x!==ch.answer)])];
+   }
+ }
+ let opts=shuffle([ch.answer,...shuffle(pool).slice(0,3)]);
+ challengeOptions.innerHTML=opts.map(o=>`<button class="option">${o}</button>`).join("");
+
+ [...challengeOptions.children].forEach(b=>b.onclick=()=>{
+   [...challengeOptions.children].forEach(x=>x.disabled=true);
+   if(b.textContent===ch.answer){
+     ch.score+=10; ch.streak++;
+     challengeFeedback.innerHTML=`<div class="feedback good">🎉 ¡Correcto! +10 puntos</div>`;
+     if(ch.streak>=3)confetti();
+   }else{
+     ch.lives--; ch.streak=0;
+     challengeFeedback.innerHTML=`<div class="feedback bad">❌ La respuesta correcta era <b>${ch.answer}</b>. La cifra resaltada está en <b>${t.name}</b>.</div>`;
+   }
+   updateCh();
+   challengeNext.classList.remove("hidden");
+ });
+}
+function endCh(){challengeGame.classList.add("hidden");challengeEnd.classList.remove("hidden");let msg=ch.score>=80?"🏆 ¡DOMINIO EXCELENTE!":ch.score>=60?"🌟 ¡MUY BUEN TRABAJO!":"💪 ¡SIGUE PRACTICANDO!";challengeEnd.innerHTML=`<h2>${msg}</h2><div class="big-number">${ch.score} pts</div><p><b>${ch.score/10} de 10 respuestas correctas.</b></p><p>Completaste el desafío. Recuerda: una misma cifra puede representar cantidades diferentes según la posición que ocupa.</p><button class="btn warn" onclick="startCh()">🔄 Intentar de nuevo</button>`;if(ch.score>=80)confetti()}
+startChallenge.onclick=startCh;challengeNext.onclick=nextCh;
+</script>
+</body>
+</html>
